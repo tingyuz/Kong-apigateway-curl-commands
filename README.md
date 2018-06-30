@@ -1,5 +1,7 @@
 # Kong apigateway curl commands
 
+Manul step to set up KONG docker container and initialization for EdgeX microservices.
+
 #### create database for kong, using posrgres sql
 docker run -d --name kong-database -p 5432:5432 -e "POSTGRES_USER=kong" -e "POSTGRES_DB=kong" postgres:9.5
 
