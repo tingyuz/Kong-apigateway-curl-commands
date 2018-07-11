@@ -1,0 +1,374 @@
+  101  git status
+  102  git add .
+  103  git status
+  104  git commit -as -m "Automate Vault root token access;Add Dockerfile and docker-compose file for KONG and securityservice"
+  105  git push origin proxyingo
+  106  git status
+  107  git commit -as -m "enable https for Vault access"
+  108  git push origin proxyingo
+  109  git status
+  110  git commit -as -m "update format of README file"
+  111  git push origin proxyingo
+  112  git status
+  113  git add .
+  114  git status
+  115  git commit -as -m "update format of README file"
+  116  git push origin proxyingo
+  117  git status
+  118  git commit -as -m "Adding curl header information for edgex microservie API access in README file"
+  119  git push origin proxyingo
+  120  git status
+  121  git status
+  122  git add .
+  123  git status
+  124  git commit -as -m "Add build script for Windows/Linux and update README"
+  125  git push origin proxyingo
+  126  ls
+  127  cd core/
+  128  ls
+  129  cd ..
+  130  ls
+  131  git rm -r --cached .vscode/
+  132  git commit -as -m "Remove .vscode folder"
+  133  git push origin proxyingo
+  134  git status
+  135  git status
+  136  git push --mirror https://github.com/tingyuz/security-api-gateway.git
+  137  git push --mirror https://github.com/tingyuz/security-api-gateway.git
+  138  git status
+  139  git remote -v
+  140  git branch
+  141  cd ..
+  142  git clone --bare https://github.com/edgexfoundry-holding/reverse-proxy.git
+  143  ls
+  144  cd reverse-proxy.git/
+  145  git push --mirror https://github.com/tingyuz/security-api-gateway.git
+  146  git branch -v
+  147  git branch -vv
+  148  git remote -v
+  149  git remote add upstream git@github.com/edgexfoundry
+  150  git remote -v
+  151  git branch -v
+  152  git remote remove upstream git@github.com/edgexfoundry
+  153  git remote delete upstream git@github.com/edgexfoundry
+  154  git remote remove  upstream git@github.com/edgexfoundry
+  155  git remote remove  upstream 
+  156  git remote -v
+  157  git log -reverse master
+  158  git log -reverse master
+  159  git log --reverse master
+  160  cd ..
+  161  ls
+  162  git clone https://github.com/edgexfoundry/security-api-gateway
+  163  ls
+  164  cd security-api-gateway/
+  165  git remote add upstream https://github.com/edgexfoundry/tingyuz/security-api-gateway
+  166  cd ..
+  167  ls
+  168  ls
+  169  cd ..
+  170  cd ..
+  171  ls
+  172  git clone https://github.com/edgexfoundry/tingyuz/security-api-gateway
+  173  git clone https://github.com/tingyuz/edgexfoundry/security-api-gateway
+  174  https://github.com/tingyuz/security-api-gateway
+  175  git clone https://github.com/tingyuz/security-api-gateway
+  176  ls
+  177  cd security-api-gateway/
+  178  git remote add upstream https://github.com/edgexfoundry/security-api-gateway
+  179  git status
+  180  git log
+  181  git remote -v
+  182  ls
+  183  git status
+  184  git checkout master
+  185  git merge --ff-only upstream/master
+  186  git fetch upstream
+  187  ls
+  188  git remote -v
+  189  git rebase --onto
+  190  git rebase -help
+  191  git status
+  192  git remote 
+  193  git remote  -v
+  194  git rebase -i origin/master
+  195  git status
+  196  git featch --a;;
+  197  git featch --all
+  198  git fetch --all
+  199  ls
+  200  git pull upstream security-api-gateway
+  201  git status
+  202  git fetch upstream
+  203  git checkout master
+  204  git merge --ff-only upstream master
+  205  git fetch
+  206  git remote -v
+  207  git merge --ff-only upstream/master
+  208  git fetch --all
+  209  git merge upstream/master
+  210  git merge origin/tingyuz/master
+  211  ls
+  212  git rebase --onto
+  213  git rebase --onto origin/master
+  214  git status
+  215  git cherry-pick
+  216  git remote
+  217  git push --set-upstream origin master
+  218  git remote -v
+  219  git fetch upstream
+  220  git merge --ff-only upstream/master
+  221  git push origin master
+  222  git merge --ff-only upstream/master
+  223  git status
+  224  git pull --rebase upsream master
+  225  git pull --rebase upstream master
+  226  git status
+  227  git pull
+  228  git status
+  229  ls
+  230  git pull --rebase upstream master
+  231  git status
+  232  git push upstream master
+  233  git status
+  234  git status
+  235  git pull
+  236  ls
+  237  git status
+  238  git branch -vv
+  239  git branch -v
+  240  git branch 
+  241  git remote 
+  242  git remote -v
+  243  git checkout upstream/master
+  244  git checkout origin/master
+  245  git status
+  246  git branch
+  247  git checkout origin/master
+  248  ls
+  249  exit
+  250  git clone https://github.com/tingyuz/security-api-gateway.git
+  251  ls
+  252  cd /c/Git/
+  253  ls
+  254  git clone https://github.com/tingyuz/security-api-gateway.git
+  255  cd security-api-gateway/
+  256  ls
+  257  git remote -v
+  258  git remote add upstream https://github.com/edgexfoundry/security-api-gateway.git
+  259  git remote -v
+  260  git fetch upstream
+  261  git checkout master
+  262  git merge upstream/master
+  263  git branch
+  264  git checkout -b feature/init
+  265  git status
+  266  git commit -as "initial release"
+  267  git branch
+  268  ls
+  269  git push 
+  270  git commit -as -amend "initial release"
+  271  git commit -as --amend "initial release"
+  272  git checkout master
+  273  git log --reverse origin/master
+  274  git log --reverse upstream/master
+  275  git rebase --onto
+  276  git rebase --onto master 
+  277  ls
+  278  git rebase upstream/master
+  279  git status
+  280  git push .
+  281  git pull
+  282  ls
+  283  git branch
+  284  git status
+  285  git pull --rebase
+  286  git
+  287  git status
+  288  git branch -b upstream/tingyu1
+  289  git checkout -b upstream/tingyu1
+  290  git branch
+  291  git checkout master 
+  292  git remote -v
+  293  git push upstream tingyu
+  294  git checkout -b proxy
+  295  git push upstream proxy
+  296  git rebase --onto
+  297  git rebase --onto proxy
+  298  git rebase --onto master
+  299  git cherry-pick
+  300  git cherry-pick -ff
+  301  git cherry-pick master
+  302  git diff
+  303  git log
+  304  git cherry-pick 3606cfec3a2b9cd4f1a504276c9530478453793d 
+  305  git status
+  306  git cherry-pick --continue
+  307  git reset
+  308  git status
+  309  git logs
+  310  git log
+  311  git log --oneline
+  312  git status
+  313  git branch
+  314  git checkout upstream/master
+  315  git status
+  316  git checkout proxy
+  317  git checkout upstream master
+  318  ls
+  319  git push .
+  320  git push upstream master
+  321  git status
+  322  git rebase --onto proxy
+  323  git rebase --onto proxy master
+  324  ls
+  325  git status
+  326  git rebase --onto master proxy
+  327  ls
+  328  git push upstream master
+  329  git fetch --all-tags
+  330  git fetch -all-tags
+  331  git fetch --all --tags
+  332  git rebase upstream/master
+  333  git remote -v
+  334  git branch
+  335  git status
+  336  git branch -vv
+  337  git branch -u upstream/master
+  338  git status
+  339  git push
+  340  git push upstream master
+  341  git push upstream HEAD:master
+  342  git branch -vv
+  343  git branch -d upstream/tingyu1
+  344  git branch -D upstream/tingyu1
+  345  git branch -vv
+  346  git branch -D feature/init
+  347  git branch -vv
+  348  git branch --unset-upstream proxy
+  349  git branch -vv
+  350  git remote -v
+  351  ls
+  352  cd ..
+  353  ls
+  354  cd gospace/
+  355  ls
+  356  cd src/
+  357  ls
+  358  cd reverse-proxy.git/
+  359  ls
+  360  git branch -v
+  361  ls
+  362  cd ..
+  363  ls
+  364  git diff
+  365  git branch -vv
+  366  cd ..
+  367  ls
+  368  cd ..
+  369  ls
+  370  cd security-api-gateway/
+  371  git branch -v
+  372  cd ..
+  373  ls
+  374  rm -rf security-api-gateway/
+  375  ls
+  376  git clone https://github.com/edgexfoundry/security-api-gateway
+  377  ls
+  378  cd security-api-gateway/
+  379  git branch -v
+  380  git remote -v
+  381  git checkout -b feature/initversion
+  382  ls
+  383  git status
+  384  git add .
+  385  git status
+  386  git push .
+  387  git status
+  388  git remote -v
+  389  git branch -v
+  390  git commit -as -amend "initial checkin from holding area"
+  391  git commit -as --amend "initial checkin from holding area"
+  392  git commit -ps --amend "initial checkin from holding area"
+  393  git status
+  394  git status
+  395  git branch -v
+  396  git remote -v
+  397  git branch -u origin/master
+  398  git status
+  399  git pull
+  400  git status
+  401  ls
+  402  git push
+  403  git push origin feature/initversion
+  404  git log
+  405  history
+  406  git branch -v
+  407  git log
+  408  git checkout master
+  430  git clone https://github.com/edgexfoundry-holding/security-vault.git
+  431  cd ..
+  432  cd Git/
+  433  ls
+  434  cd security-secret-store/
+  435  ls
+  436  git branch -b feature/initversion
+  437  git checkout -b feature/initversion
+  438  git status
+  439  git add .
+  440  git commit -ps --amend "initial checkin  from holding area"
+  441  git remote -v
+  442  git -u origin/master
+  443  git branch -u origin/master
+  444  git pull
+  445  git push origin feature/initversion
+  446  ls
+  447  git branch -v
+  448  git status
+  449  git diff
+  450  git log
+  451  git checkout master
+  452  git remote -v
+  453  cd ..
+  454  ls
+  455  LS
+  456  cd security-api-gateway/
+  457  ls
+  458  git status
+  459  git -b checkout feature/update-makefile
+  460  git checkout -b feature/update-makefile
+  461  ls
+  462  nano Makefile 
+  463  git status
+  464  git add .
+  465  git commit -as --amend "update makefile"
+  466  git commit -ps --amend "update makefile"
+  467  git -u origin/master
+  468  git remote -v
+  469  git push origin feature/initversion
+  470  git push origin feature/update-makefile
+  471  git status
+  472  ls
+  473  git status
+  474  cd ..
+  475  git clone https://github.com/edgexfoundry/developer-scripts.gi
+  476  git clone https://github.com/edgexfoundry/developer-scripts.git
+  477  ls
+  478  cd developer-scripts/
+  479  ls
+  480  cd compose-files/
+  481  ls
+  482  git status
+  483  git remote
+  484  git remote -v
+  485  git checkout -b feature/for-proxy
+  486  git status
+  487  git add .
+  488  git commit -ps --amend "add docker compose file for vault and proxy"
+  489  git push origin feature/for-proxy
+  490  ls
+  491  cd ..
+  492  ls
+  493  git branch -v
+  494  git checkout master
+ 
