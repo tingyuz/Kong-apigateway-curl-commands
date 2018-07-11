@@ -1,0 +1,252 @@
+//create database for kong, using posrgres sql
+docker run -d --name kong-db --network=docker_edgex-network -p 5432:5432 -e "POSTGRES_DB=kong" -e "POSTGRES_USER=kong" postgres:9.5
+
+//upgrade the postgres database
+docker run --rm --network=docker_edgex-network -e "KONG_DATABASE=postgres" -e "KONG_PG_HOST=kong-db"  kong:0.13.0 kong migrations up
+
+//start kong container
+docker run -d --name kong --network=docker_edgex-network -e "KONG_DATABASE=postgres" -e "KONG_PG_HOST=kong-db" -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" -e "KONG_PROXY_ERROR_LOG=/dev/stderr" -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" -e "KONG_ADMIN_LISTEN=0.0.0.0:8001" -e "KONG_ADMIN_LISTEN_SSL=0.0.0.0:8444" -p 8000:8000 -p 8443:8443 -p 8001:8001 -p 8444:8444 kong:0.13.0
+
+
+//start the edgex serivces
+
+
+//use below to set up kong as the same user-defined network as edgex
+docker network connect composefiles_edgex-network kong
+
+//need to use IP of local host (192.168.1.151) in the upstream_url when adding each api for the edgex microservice.
+//10.239.233.128
+
+//create service for each edgex microservice 
+curl -i -X POST --url http://localhost:8001/services/ -d "name=coredata" -d "host=192.168.1.153" -d "port=48080" -d "protocol=http"
+
+curl -i -X POST --url http://localhost:8001/services/ -d "name=metadata" -d "host=192.168.1.151" -d "port=48081" -d "protocol=http"
+
+curl -i -X POST --url http://localhost:8001/services/ -d "name=command" -d "host=192.168.1.151" -d "port=48082" -d "protocol=http"
+
+curl -i -X POST --url http://localhost:8001/services/ -d "name=notifications" -d "host=192.168.1.151" -d "port=48060" -d "protocol=http"
+
+// use below for testing x-custom-id which may be used later for our EdgeX micro service
+curl -i -X POST --url http://localhost:8001/services/ -d "name=headertest" -d "host=192.168.1.151" -d "port=3000" -d "protocol=http"
+
+
+//create route for the service
+curl -i -X POST --url http://localhost:8001/services/coredata/routes -d "paths[]=/coredata" -d "hosts=edgex"
+
+curl -i -X POST --url http://localhost:8001/services/metadata/routes -d "paths[]=/metadata"
+
+curl -i -X POST --url http://localhost:8001/services/command/routes -d "paths[]=/command"
+
+curl -i -X POST --url http://localhost:8001/services/notifications/routes -d "paths[]=/notifications"
+
+curl -i -X POST --url http://localhost:8001/services/headertest/routes -d "paths[]=/headertest"
+
+curl -i -X POST --url http://localhost:8001/services/headercheck/routes -d "paths[]=/headercheck"
+
+//use below to access the microservice through proxy
+curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping
+
+//use below to access the headertest webservice
+curl -i -X GET --url http://localhost:8000/headertest/headercheck
+
+//if use postman, we need to enable postman interceptor as header "host" is restricted and it will be blocked by default unless interceptor is enabled.
+
+// currently we are using these partial uri to map the individual microservice of edgex
+coredata - core data
+metadata - metadata
+command - command
+notifications - support notifications
+
+//enable plugins ( auth, log etc ) for kong. we are using JWT here for api1 right now, so a request to coredata will be denied if there is no jwt.
+curl -X POST http://localhost:8001/services/coredata/plugins -d "name=jwt" 
+
+// for testing header parsing
+curl -X POST http://localhost:8001/services/headertest/plugins -d "name=jwt" 
+
+//create a consumer "adam" for at kong so that ibm can access coredata service
+curl -X POST http://localhost:8001/consumers -d "username=adam"
+		
+//use below to create JWT credential after creating consumer adam,
+curl -X POST http://localhost:8001/consumers/adam/jwt -H "Content-Type: application/x-www-form-urlencoded"
+
+//we can delete the jwt credential later with url below, id is what we got from the url above
+curl -X DELETE http://localhost:8001/consumers/adam/jwt/{id}
+
+// use this to get the jwt token for the consumer 
+curl -X GET http://localhost:8001/consumers/adam/jwt
+
+{"total":1,"data":[{"created_at":1523455842000,"id":"d7caa578-54d1-44f1-957f-c705a23670b3","algorithm":"HS256","key":"26DecM5b5pWlDWog1S4fxmYVV14I3Lb7","secret":"DgqrVd4BVsVPAX5NYzQBH1cjEQkj0bH3","consumer_id":"0f545aa8-8b81-4d5b-a454-968d49a5cad0"}]}
+
+//**
+{"total":1,"data":[{"created_at":1524496473000,"id":"171d6056-5928-4325-9712-740e13e898f0","algorithm":"HS256","key":"2PttOj0GRB8t5mNQbwC1dAOjFoSAt02f","secret":"WN2vSEADFXxtZA6rX7at652G5RL4lPdO","consumer_id":"baf3c06e-1a0f-44e6-a8f0-7101eb662b2c"}]}
+
+
+jwt :
+curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJiejRraVlOVlV0N0V2MDVnYVdNV1Z3eHl4TVBON0R3MCIsInVzZXJuYW1lIjoiYWRhbSJ9.ML04_4Fg-GV19BpXyFVKpkMvR5Km4_p07v_41nJ-KJs"
+**//
+
+
+//go to https://jwt.io/ and use information below to get JWT token. notice iss is the key we got when creating jwt token, and uncheck secret base64 encoded
+
+header: 
+{
+  "typ": "JWT",
+  "alg": "HS256"  
+}
+
+payload data
+{
+  "iss": "26DecM5b5pWlDWog1S4fxmYVV14I3Lb7"
+}
+
+secret: DgqrVd4BVsVPAX5NYzQBH1cjEQkj0bH3
+
+
+BWF8AN017DiHSF9YXpHZQbP2OOGHjuHw
+
+
+//use this below to access the resource 
+curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjb2pWeXY0MWt2WkRJOWhoSkcySjhMVnRuMU9YNzYxRCIsInVzZXJuYW1lIjoiYWRhbSJ9.WAm4_M-BkGDFPqLV-CbSWsJNTONsvZtoZJ0jJ8hh5KE" 
+
+//access resource with query string with jwt
+curl -i -X GET --url http://localhost:8000/admin/consumers?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI5M3V3cmZBc0xzS2Qwd1JnckVFdlRzQloxSmtYOTRRciIsImFjY291bnQiOiJhZG1pbmlzdHJhdG9yIn0.em8ffitqrd59_DeYKfQkTZGtUA1T99NikETwtedOgHQ
+
+
+//access resource with cookie with jwt. need to set config.cookie_names which is disabled by default
+curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -b "jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIyNkRlY001YjVwV2xEV29nMVM0ZnhtWVZWMTRJM0xiNyIsInVzZXJuYW1lIjoiYWRhbSJ9.Y99JSjJSEZBrfknnxiHFh5Mn2VsZsdr7QZPXT4sjc0s"
+
+
+//add cert to edgex.command
+C:\Git\gospace\src\edgexsecurity>curl -i -X POST http://localhost:8001/certificates -F "cert=@res\edgex.com.crt" -F "key=@res\edgex.com.key" -F "snis=edgex.com"
+
+
+//service id for command microservice, this can be found from GET localhost:8001/services 
+service.id: 4ed734fe-0585-489b-b73b-ca5572bc4acc
+
+//enable ssl for command microservice 
+curl -i -X POST http://localhost:8001/routes -d "hosts[]=edgex.com" -d "service.id=4ed734fe-0585-489b-b73b-ca5572bc4acc"
+
+//access the resource with ssl enabled
+curl -k -v https://localhost:8443/test1/headercheck -H 'host:edgex.com'
+
+
+////////////////////////////////
+//config oAuth2 with KONG, this is not finished yet.
+////////////////////////////////
+
+curl -X POST http://localhost:8001/apis/api2/plugins -d "name=oauth2" -d  "config.scopes=email,phone,address" -d "config.mandatory_scope=true" -d  "config.enable_authorization_code=true"
+
+//create a consumer 
+curl -X POST http://localhost:8001/consumers/ -data "username=adam"
+
+// create an application
+curl -X POST http://localhost:8001/consumers/adam/oauth2 -d "name=TestApp" -d "redirect_uri=http://localhost:8000/metadata/api/v1/ping"
+
+returns
+{"client_id":"OSXdZ5Ga2oqlNUmECyJfyJdLRxU2gtxh","created_at":1522954954000,"id":"14469e5f-d48b-40d3-a651-bb11ba8531bf","redirect_uri":["http:\/\/localhost:8000\/metadata\/api\/v1\/ping"],"name":"TestApp","client_secret":"Khhp26r11TSKmQZCUoNtT0E6QilV14IW","consumer_id":"441762cf-9fb6-4e46-9219-85017f3a03f9"}
+
+
+//get access token for the application
+curl -X POST http://localhost:8001/oauth2_tokens -d "credential_id=14469e5f-d48b-40d3-a651-bb11ba8531bf" -d "expires_in=3600
+
+{"token_type":"bearer","access_token":"fM1T2eiBEfoJLUyFLns1WPrWsxQFcHAI","created_at":1522956043000,"expires_in":3600,"credential_id":"14469e5f-d48b-40d3-a651-bb11ba8531bf","id":"95ae5891-d93d-428a-ae1f-aede21ada685"}
+
+
+
+
+//access kong on ssl 
+curl -k -v https://localhost:8443/admin/routes?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI5M3V3cmZBc0xzS2Qwd1JnckVFdlRzQloxSmtYOTRRciIsImFjY291bnQiOiJhZG1pbmlzdHJhdG9yIn0.em8ffitqrd59_DeYKfQkTZGtUA1T99NikETwtedOgHQ
+
+
+//for vault 
+
+1.  vault  server -dev
+2.  set VAULT_ADDR=http://127.0.0.1:8200
+3.  vault status 
+4.  vault write secret/edgex/cert cert=@edgex.com.crt key=@edgex.com.key
+5.  valut list secret/edgex/
+5. curl --header "X-Vault-Token: 232d6e0a-3a09-1090-aa08-b303f28c05e1" --request GET http://127.0.0.1:8200/v1/secret/edgex/cert
+
+
+curl -i -X POST --url http://localhost:8001/services/ -d "name=hd" -d "host=192.168.1.153" -d "port=3000" -d "protocol=http"
+curl -i -X POST --url http://localhost:8001/services/hd/routes -d "paths[]=/hd"
+curl -X POST http://localhost:8001/services/hd/plugins -d "name=jwt" 
+curl -k -v https://localhost:8443/hd/headercheck?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI5M3V3cmZBc0xzS2Qwd1JnckVFdlRzQloxSmtYOTRRciIsImFjY291bnQiOiJhZG1pbmlzdHJhdG9yIn0.em8ffitqrd59_DeYKfQkTZGtUA1T99NikETwtedOgHQ
+
+curl -k -v https://localhost:8443/hd/headercheck?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTTE5LZnlRZEdScTVtUTBVNUpBTVhaUlNSMmhFaFhWOSIsImFjY291bnQiOiJqYWNrMSJ9.PXoS3msPZ5xDPymEGUGCzHa9kn2K39lzb8BToy6815s
+
+//enable key authentication for admin service
+curl -X POST http://localhost:8001/services/admin/plugins --data "name=key-auth"
+curl -X POST http://localhost:8001/consumers/administrator/key-auth -d "key=edgex"
+//access service with key auth
+curl http://localhost:8000/admin/services?apikey=edgex.com
+
+curl -k -v https://localhost:8443/admin/services?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJUR0hTc2I5cldTTzlncnBGd2J0am16NnFyMUczcWVRayIsImFjY291bnQiOiJ0b20ifQ.Y9Noqvuj52vGkFDrYaI8KCBcWk1XdlTp6N3HUCvscso
+curl -k -v https://localhost:8443/admin/services?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJxdjhKM2RXWUptVXBJSVp2SXNpN1d3S0Vtc1NwV0lXOCIsImFjY291bnQiOiJ0b20ifQ.Ap7xwyWQEBNZ9QVqFJAhCe0Y87oHYE0Z2Qh3fXbpxiY
+>docker run -it -d tzeng/edgexproxy sh
+docker exec -it e31afaafbef2 sh
+
+
+
+curl -X POST http://localhost:8001/plugins --data "name=ssl" --data "config.cert=@test.crt" --data "config.key=@test.key" --data "config.only_https=true"
+
+
+curl -i -X POST http://localhost:8001/certificates \
+    -F "cert=@/path/to/cert.pem" \
+    -F "key=@/path/to/cert.key" \
+    -F "snis=ssl-example.com
+
+curl -X POST http://kong:8001/services/coredata/plugins --data "name=ssl"  --data "config.cert=@test.crt" --data "config.key=@test.key" --data "config.only_https=true"
+
+
+// secret path from vault container
+v1/secret/edgex/pki/tls/edgex-kong
+
+//original secret path on local vault
+v1/secret/edgex/cert
+
+//David's testing VM 
+34.215.125.101
+
+curl --header "X-Vault-Token: d8610b4e-35a9-f245-6757-9504c6af0b75" --request GET http://127.0.0.1:8200/v1/secret/edgex/pki/tls/edgex-kong
+
+curl -v -k --header "X-Vault-Token: 2f6b6586-0d4e-ca10-e200-5418d3e53ca6" --request GET http://127.0.0.1:8200/v1/secret/edgex/pki/tls/edgex-kong
+2f6b6586-0d4e-ca10-e200-5418d3e53ca6
+
+
+
+curl -i -X POST http://localhost:8001/certificates -F "cert=@test.pem" -F "key=@test.key" -F "snis=edgex.com
+
+
+curl -i -X POST --url http://localhost:8001/services/ -d "name=admin" -d "host=localhost" -d "port=3000" -d "protocol=http"
+
+curl -i -X POST --url http://localhost:8001/services/admin/routes -d "paths[]=/admin"
+
+
+curl -i -X POST http://localhost:8001/routes --data "hosts[]=edgex.com" --data "service.id=3e77b271-8ba7-421e-a4d0-6651b39ac603"
+
+
+//master token of vault is kept in this file with name as root_token
+edgex-vault:/vault/config/resp-init.json
+
+
+docker build -t edgex/proxy .
+
+docker run -v edgex_vault-config:/vault/config --network=edgex_edgex-network edgex/proxy
+
+docker run  --volumes-from edgex-vault --network=edgex_edgex-network edgex/proxy
+
+//to access the resource, 
+curl -k -v -H "host: edgex" https://localhost:8443/metadata/api/v1/ping?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzSnR6RHlYUWNRUk1ralFFUTRZaUR1OFA2bnpkdHRONyIsImFjY291bnQiOiJqb2huIn0.xD6lNmFEgJYPHhMCsJUf3EOVnSzGpZpXWt_HFxc-wTw
+
+
+//resp-init.json file that includes root_token
+{
+  "keys": [
+    "69be8924eea8b553755d090f6f38a7ebab24d17b8a6a515ae5f11cb13872b532"
+  ],
+  "keys_base64": [
+    "ab6JJO6otVN1XQkPbzin66sk0XuKalFa5fEcsThytTI="
+  ],
+  "root_token": "2f6b6586-0d4e-ca10-e200-5418d3e53ca6"
+}
