@@ -1,0 +1,38 @@
+1. Use env.sh to export the containers names ( # source ./env.sh)
+2. Run deploy-edgeX.sh with does docker-compose up all the containers (./deploy-edgeX.sh)
+3. Run bin/run.sh -cd which does
+	3.1 copy all the files under postman-test from local folder to mounted  /etc/newman volume
+	3.2 run test for each individual microservice based on input parameter
+		3.2.1 import coredata sample data script
+			run postman in the postman container with collection collections/core-data-importer.postman_collection.json and environment environment/core-data-docker.postman_environment.json parameters
+		3.2.2 run coredata test script
+			run postman in the postman container with various collections and environment
+		3.2.3 flush sample data
+	
+	
+Run newman on windows platform.
+	newman run -e bin/postman-test/environment/core-metadata.postman_environment.json --disable-unicode
+	newman run bin/postman-test/collections/core-metadata-importer.postman_collection.json -e bin/postman-test/environment/core-metadata.postman_environment.json --disable-unicode
+	newman run bin/postman-test/collections/core-metadata-importer.postman_collection.json -e bin/postman-test/environment/core-metadata.postman_environment.json --folder addressable -d bin/postman-test/data/addressableData.json --disable-unicode
+	//run security test set on windows
+	C:\Git\blackbox-testing>newman run bin\postman-test\collections\security-service.postman_collection.json -e bin\postman-test\environment\security-docker.postman_environment.json --disable-unicode --insecure
+
+Run security testing manually 
+vc=$(docker-compose ps -q volume)
+im=$(echo $vc | cut -b 1-12)
+cd blackbox-testing/bin
+docker cp postman-test/. $im:/etc/newman
+source ./setupSecurityTest.sh
+./runSecurityserviceTest.sh
+./cleanSecurityserviceTest.sh
+
+Read root key from vault volume
+
+RT=$(docker exec -i edgex-vault sh -c "cat /vault/config/assets/resp-init.json")
+ROOTKEY=$(echo $RT | sed 's/.*"\(.*\)"[^"]*$/\1/')
+
+
+Use rootkey and token to access resources in Vault/Kong
+curl -H "X-Vault-Token: e0e39771-ac31-8492-eb51-b632313569a7" https://127.0.0.1:8200/v1/sys/key-status
+curl -k –H "host: edgex" https://localhost:8443/coredata/v1/ping -H "Authorization:bearer y2iFm2aXo3U4TkkpNZqGuAGt2dNHvIag"
+  

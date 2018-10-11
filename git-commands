@@ -1,14 +1,52 @@
-git clone https://github.com/edgexfoundry/security-api-gateway.git
-git remote -v
-git checkout -b feature/new-branch
+# Normal working procedure for EdgeX project #
+//Create a Fork on GitHub (see fork example).
+git clone https://github.com/$MYACCOUNT/edgexfoundry/security-api-gateway.git
 git remote add upstream https://github.com/edgexfoundry/security-api-gateway
+git checkout -b feature/new-branch
+git branch -u origin/master
 git status
 git add .
 git commit -as -m "Automate Vault root token access;Add Dockerfile and docker-compose file for KONG and securityservice"
 git commit -ps --amend "initial checkin from holding area"
 git push origin feature/new-branch
-git push -f origin feature/new-branch
-git pull --rebase upsream master
+//alterative we may need to push force for the same branch 
+//git push -f origin feature/new-branch
+
+
+
+# Sync forked personal repo to upstream repo #
+
+//Change directory to your local repository.
+cd branch
+
+//Switch to master branch if you are not git checkout master
+checkout master
+
+//Add the parent as a remote repository if upstream is not set up yet 
+git remote add upstream <repo-location>
+
+git fetch upstream
+git rebase upstream/master
+
+//May need to push to origin to syn forked repo to upstream
+$git push origin master
+
+
+# Sync forked repo to upstream forcely notice git reset and --force#
+git remote add upstream https://github.com/some_user/some_repo
+git fetch upstream
+git checkout master
+git reset --hard upstream/master  
+git push origin master --force
+
+# Rebase your origin master before a new feature is developed #
+git fetch upstream
+giit checkout master
+git pull --rebase upstream master
+git push origin master
+
 
 # cherry-pick for a previus commited
+git reflog
 git cherry-pick 3606cfec3a2b9cd4f1a504276c9530478453793d 
+

@@ -1,17 +1,20 @@
+###############################
+start with docker compose file
+###############################
+docker-compose up -d volume
+docker-compose up -d config-seed
+docker-compose up -d consul
+docker-compose up -d vault
+docker-compose up -d vault-worker
+docker-compose up -d kong-db
+docker-compose up -d kong-migrations
+docker-compose up -d kong
+docker-compose up -d edgex-proxy
 
-docker network create kong-net
 
-//create database for kong, using posrgres sql
-docker run -d --name kong-database --network=kong-net -p 5432:5432 -e "POSTGRES_USER=kong" -e "POSTGRES_DB=kong" postgres:9.6
-
-//upgrade the postgres database
-docker run --rm --network=kong-net -e "KONG_DATABASE=postgres" -e "KONG_PG_HOST=kong-database" -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" kong:latest kong migrations up
-
-//start kong container
-docker run -d --name kong --network=kong-net -e "KONG_DATABASE=postgres" -e "KONG_PG_HOST=kong-database" -e "KONG_ADMIN_LISTEN=0.0.0.0:8001" -e "KONG_ADMIN_LISTEN_SSL=0.0.0.0:8444" -p 8000:8000 -p 8443:8443 -p 8001:8001 -p 8444:8444 kong:0.13.0
-
-
-//start the edgex serivces
+#################################
+start the edgex serivces manually
+#################################
 
 //create service for each edgex microservice 
 curl -i -X POST --url http://localhost:8001/services/ -d "name=coredata" -d "host=192.168.1.153" -d "port=48080" -d "protocol=http"
@@ -39,14 +42,8 @@ curl -i -X POST --url http://localhost:8001/services/headercheck/routes -d "path
 //use below to access the microservice through proxy
 curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping
 
-
 //if use postman, we need to enable postman interceptor as header "host" is restricted and it will be blocked by default unless interceptor is enabled.
 
-// currently we are using these partial uri to map the individual microservice of edgex
-coredata - core data
-metadata - metadata
-command - command
-notifications - support notifications
 
 //enable plugins ( auth, log etc ) for kong. we are using JWT here for api1 right now, so a request to coredata will be denied if there is no jwt.
 curl -X POST http://localhost:8001/services/coredata/plugins -d "name=jwt" 
@@ -66,16 +63,7 @@ curl -X DELETE http://localhost:8001/consumers/adam/jwt/{id}
 // use this to get the jwt token for the consumer 
 curl -X GET http://localhost:8001/consumers/adam/jwt
 
-{"total":1,"data":[{"created_at":1523455842000,"id":"d7caa578-54d1-44f1-957f-c705a23670b3","algorithm":"HS256","key":"26DecM5b5pWlDWog1S4fxmYVV14I3Lb7","secret":"DgqrVd4BVsVPAX5NYzQBH1cjEQkj0bH3","consumer_id":"0f545aa8-8b81-4d5b-a454-968d49a5cad0"}]}
-
-//**
-{"total":1,"data":[{"created_at":1524496473000,"id":"171d6056-5928-4325-9712-740e13e898f0","algorithm":"HS256","key":"2PttOj0GRB8t5mNQbwC1dAOjFoSAt02f","secret":"WN2vSEADFXxtZA6rX7at652G5RL4lPdO","consumer_id":"baf3c06e-1a0f-44e6-a8f0-7101eb662b2c"}]}
-
-
-jwt :
 curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJiejRraVlOVlV0N0V2MDVnYVdNV1Z3eHl4TVBON0R3MCIsInVzZXJuYW1lIjoiYWRhbSJ9.ML04_4Fg-GV19BpXyFVKpkMvR5Km4_p07v_41nJ-KJs"
-**//
-
 
 //go to https://jwt.io/ and use information below to get JWT token. notice iss is the key we got when creating jwt token, and uncheck secret base64 encoded
 
@@ -90,12 +78,6 @@ payload data
   "iss": "26DecM5b5pWlDWog1S4fxmYVV14I3Lb7"
 }
 
-secret: DgqrVd4BVsVPAX5NYzQBH1cjEQkj0bH3
-
-
-BWF8AN017DiHSF9YXpHZQbP2OOGHjuHw
-
-
 //use this below to access the resource 
 curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjb2pWeXY0MWt2WkRJOWhoSkcySjhMVnRuMU9YNzYxRCIsInVzZXJuYW1lIjoiYWRhbSJ9.WAm4_M-BkGDFPqLV-CbSWsJNTONsvZtoZJ0jJ8hh5KE" 
 
@@ -106,9 +88,10 @@ curl -i -X GET --url http://localhost:8000/admin/consumers?jwt=eyJhbGciOiJIUzI1N
 //access resource with cookie with jwt. need to set config.cookie_names which is disabled by default
 curl -i -X GET --url http://localhost:8000/coredata/api/v1/ping -b "jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIyNkRlY001YjVwV2xEV29nMVM0ZnhtWVZWMTRJM0xiNyIsInVzZXJuYW1lIjoiYWRhbSJ9.Y99JSjJSEZBrfknnxiHFh5Mn2VsZsdr7QZPXT4sjc0s"
 
-
-//add cert to edgex.command
-C:\Git\gospace\src\edgexsecurity>curl -i -X POST http://localhost:8001/certificates -F "cert=@res\edgex.com.crt" -F "key=@res\edgex.com.key" -F "snis=edgex.com"
+############################
+add cert to edgex.command
+############################
+curl -i -X POST http://localhost:8001/certificates -F "cert=@res\edgex.com.crt" -F "key=@res\edgex.com.key" -F "snis=edgex.com"
 
 
 //service id for command microservice, this can be found from GET localhost:8001/services 
@@ -124,7 +107,6 @@ curl -k -v https://localhost:8443/test1/headercheck -H 'host:edgex.com'
 ////////////////////////////////
 //config oAuth2 with KONG
 ////////////////////////////////
-
 curl -X POST http://localhost:8001/services/test/plugins --data "name=oauth2"  --data "config.scopes=email,phone,address" --data "config.mandatory_scope=true" --data "config.enable_client_credentials=true"
 
 //create a consumer 
@@ -147,13 +129,12 @@ curl -k -v https://localhost:8443/admin/routes?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6I
 
 
 # setup acl plugin for KONG
-
 curl -i -X POST --url http://localhost:8001/plugins/ --data "name=acl" --data "config.whitelist=group1, group2" --data "config.hide_groups_header=true"
-
 curl -X POST http://kong:8001/consumers/tom/acls --data "group=group1"
 
+########################################
 # Setup vault dev server for testing
-
+########################################
 1.  vault  server -dev
 2.  set VAULT_ADDR=http://127.0.0.1:8200
 3.  vault status 
@@ -181,9 +162,7 @@ curl -k -v https://localhost:8443/admin/services?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI
 docker exec -it e31afaafbef2 sh
 
 
-
 curl -X POST http://localhost:8001/plugins --data "name=ssl" --data "config.cert=@test.crt" --data "config.key=@test.key" --data "config.only_https=true"
-
 
 curl -i -X POST http://localhost:8001/certificates \
     -F "cert=@/path/to/cert.pem" \
