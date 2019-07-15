@@ -1,0 +1,6 @@
+
+# recursively formats, simplifies, and saves result into every file under current directory.
+gofmt -s -w .  
+
+# list files whose formatting differs from gofmt's
+gofmt -l .
