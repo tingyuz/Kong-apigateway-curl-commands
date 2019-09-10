@@ -1,6 +1,9 @@
 
 # recursively formats, simplifies, and saves result into every file under current directory.
-gofmt -s -w .  
+gofmt -s -w -l .  
 
 # list files whose formatting differs from gofmt's
 gofmt -l .
+
+# run individual test case for go project
+$ go test -v -timeout 30s github.com/edgexfoundry/edgex-go/internal/security/proxy -run TestInit
