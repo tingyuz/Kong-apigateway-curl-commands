@@ -171,3 +171,8 @@ curl -i -X POST http://localhost:8001/certificates \
 
 curl -X POST http://kong:8001/services/coredata/plugins --data "name=ssl"  --data "config.cert=@test.crt" --data "config.key=@test.key" --data "config.only_https=true"
 
+#######################
+Verify the credential pairs in the vault 
+#######################
+curl -k --header "X-Vault-Token: s.JCgXTjP7fmUnt5YAvPy73XCG" https://127.0.0.1:8200/v1/secret/edgex/mongo/coredata
+curl -k --header "X-Vault-Token: s.JCgXTjP7fmUnt5YAvPy73XCG" https://127.0.0.1:8200/v1/secret/edgex/coredata/mongodb
