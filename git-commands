@@ -50,3 +50,8 @@ git push origin master
 git reflog
 git cherry-pick 3606cfec3a2b9cd4f1a504276c9530478453793d 
 
+# get feature branch from another dev for testing
+$ git clone https://github.com/anonymouse64/docker-edgex-consul.git 
+$ cd docker-edgex-consul
+$ git checkout bugfix/ubuntu-jq
+$ make docker
