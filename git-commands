@@ -55,3 +55,6 @@ $ git clone https://github.com/anonymouse64/docker-edgex-consul.git
 $ cd docker-edgex-consul
 $ git checkout bugfix/ubuntu-jq
 $ make docker
+
+# check out PR locally
+https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/checking-out-pull-requests-locally
