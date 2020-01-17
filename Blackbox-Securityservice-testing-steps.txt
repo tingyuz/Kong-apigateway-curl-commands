@@ -34,5 +34,8 @@ ROOTKEY=$(echo $RT | sed 's/.*"\(.*\)"[^"]*$/\1/')
 
 Use rootkey and token to access resources in Vault/Kong
 curl -H "X-Vault-Token: e0e39771-ac31-8492-eb51-b632313569a7" https://127.0.0.1:8200/v1/sys/key-status
-curl -k –H "host: edgex" https://localhost:8443/coredata/v1/ping -H "Authorization:bearer y2iFm2aXo3U4TkkpNZqGuAGt2dNHvIag"
+curl -k â€“H "host: edgex" https://localhost:8443/coredata/v1/ping -H "Authorization:bearer y2iFm2aXo3U4TkkpNZqGuAGt2dNHvIag"
+
+# create token for kong API gateway by overwriting the entrypoint
+docker-compose -f docker-compose-nexus.yml run --rm --entrypoint /edgex/security-proxy-setup edgex-proxy --init=false --useradd=user --group=admin
   
