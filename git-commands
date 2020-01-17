@@ -6,7 +6,7 @@ git checkout -b feature/new-branch
 git branch -u origin/master
 git status
 git add .
-git commit -as -m "Automate Vault root token access;Add Dockerfile and docker-compose file for KONG and securityservice"
+git commit -as -m "this is title" -m "this is the description of the ticket"
 git commit -ps --amend "initial checkin from holding area"
 git push origin feature/new-branch
 //alterative we may need to push force for the same branch 
