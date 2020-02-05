@@ -46,6 +46,10 @@ git pull --rebase upstream master
 git push origin master
 
 
+# Create a new branch to fix issues that exist in upstream non-master branch ( such as Fuji release)
+git fetch upstream fuji
+git checkout -b feature/fix-issue-xxx --track upstream/fuji
+
 # cherry-pick for a previus commited
 git reflog
 git cherry-pick 3606cfec3a2b9cd4f1a504276c9530478453793d 
