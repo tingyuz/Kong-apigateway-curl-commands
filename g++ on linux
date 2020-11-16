@@ -1,3 +1,8 @@
+# use this command line to build a single cpp file 
+c++ -c httpserver.cpp
+c++ httpserver.cpp -o httpserver -L /usr/lib/ -lboost_system -lboost_thread -lpthread
+
+# then
 Your library is a dynamic library. You need to tell the operating system where it can locate it at runtime.
 
 To do so, we will need to do those easy steps:
@@ -18,3 +23,5 @@ Note that the path should be the directory where the path.so.something is. So if
 $ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/my_library/
 $ export LD_LIBRARY_PATH
 $ ./my_app
+
+
