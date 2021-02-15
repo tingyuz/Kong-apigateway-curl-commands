@@ -1,0 +1,28 @@
+
+# make sure to check the boost version on both folders
+
+cat /usr/local/include/boost/boost.hpp | grep VERSION
+cat /usr/include/boost/boost.hpp | grep VERSION
+
+ls /usr/local/lib/boost/libboost*
+ls /usr/lib/boost/libboost*
+ls /usr/lib/x86_64-linux-gnu/libboost*
+
+
+# identify what version we have in the system
+apt-cache show libboost-dev
+
+# install a specific version from repo
+sudo apt-get install libboost-dev=1.71.0
+
+# remove the boost lib installed previusly 
+sudo apt-get --purge remove libboost-dev libboost-doc
+# or this way
+sudo apt remove libboost-all-dev
+sudo apt autoremove
+sudo apt install libboost-all-dev
+
+# remove whatever left
+apt list --installed '*boost*'
+purge -y libboost*
+
