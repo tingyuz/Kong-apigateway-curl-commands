@@ -1,0 +1,2 @@
+# create k8s object
+sudo kubectl apply -f ./my-manifest.yaml  
