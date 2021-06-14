@@ -4,3 +4,6 @@
 
 # create k8s object
 sudo kubectl apply -f ./my-manifest.yaml  
+
+# check pv after create pv and pvc
+sudo kubectl get persistentvolume/ndn-pv-volume
