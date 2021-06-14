@@ -1,2 +1,4 @@
+# https://github.com/dennyzhang/cheatsheet-kubernetes-A4
+
 # create k8s object
 sudo kubectl apply -f ./my-manifest.yaml  
