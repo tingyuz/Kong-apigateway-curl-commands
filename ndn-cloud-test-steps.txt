@@ -17,7 +17,7 @@
 2.3.2 nfdc route add /ndn-onprem-resource {faceID-from 2.3.1}
 
 3. send curl command to ndnclient to access resource 
-```
+
 curl --request POST --data '{"hash":"4SDFSDJKLE", "mode": "async", "publicname":"/ndn-cloud-resource", "destination":"newfile.bin", "callback":"http://localhost:8000"}' http://ndnclient-ip:8080/interest
-```
+
 
