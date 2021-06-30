@@ -1,3 +1,13 @@
+
+0. building ndn tools
+when using waf, use the option to choose different boostlib
+
+./waf configure --boost-includes=/usr/local/include --boost-libs=/usr/local/lib
+
+and 
+sudo ldconfig
+
+
 1. set up cloud resource on AKS
 1.1 run ndn-producer in pod of AKS
 1.2 create ld_balancer service to expose TCP port 443 that maps to port 6363 for NFD
