@@ -16,8 +16,8 @@
 3.3.1 nfdc face create tcp://local-VM-ip:6363
 3.3.2 nfdc route add /ndn-onprem-resource {faceID-from 2.3.1}
 
-4. send curl command to ndnclient to access resource 
+4. send curl command to ndnclient to access resource. Notice here name should be globalname (the internal name that is known to NDN network) 
 
-curl --request POST --data '{"hash":"4SDFSDJKLE", "mode": "async", "publicname":"/ndn-cloud-resource", "destination":"newfile.bin", "callback":"http://localhost:8000"}' http://ndnclient-ip:8080/interest
+curl --request POST --data '{"hash":"4SDFSDJKLE", "mode": "async", "name":"/ndn-cloud-resource", "destination":"newfile.bin", "callback":"http://localhost:8000"}' http://ndnclient-ip:8080/interest
 
 
