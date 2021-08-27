@@ -5,6 +5,15 @@
 #get pods name and put it into $PODNAME
 PODNAME=$(sudo kubectl get pods -l app=iml-ndn -o jsonpath='{.items[*].metadata.name}')
 
+#check the config
+sudo kubectl config view --raw
+
+# read the admin cert
+sudo kubectl config view --raw -o jsonpath='{.users[*].user.client-certificate-data}' | base64 --decode > admin.crt
+openssl x509 -in admin.crt -text -noout | head
+
+# check api request and return
+sudo kubectl get pods -v 6
 
 #inside the pod the secrets are mounted on volumes. So get them there
 TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
