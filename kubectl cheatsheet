@@ -6,6 +6,10 @@
 PODNAME=$(sudo kubectl get pods -l app=iml-ndn -o jsonpath='{.items[*].metadata.name}')
 
 
+#inside the pod the secrets are mounted on volumes. So get them there
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+CACERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
 # create k8s object
 sudo kubectl apply -f ./my-manifest.yaml  
 
