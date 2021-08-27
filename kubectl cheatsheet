@@ -2,6 +2,10 @@
 
 # https://cheatsheet.dennyzhang.com/kubernetes-yaml-templates
 
+#get pods name and put it into $PODNAME
+PODNAME=$(sudo kubectl get pods -l app=iml-ndn -o jsonpath='{.items[*].metadata.name}')
+
+
 # create k8s object
 sudo kubectl apply -f ./my-manifest.yaml  
 
