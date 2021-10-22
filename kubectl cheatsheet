@@ -24,3 +24,21 @@ sudo kubectl apply -f ./my-manifest.yaml
 
 # check pv after create pv and pvc
 sudo kubectl get persistentvolume/ndn-pv-volume
+
+# keep pod running inside k8s
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-ndn-file
+spec:
+  containers:
+  - name: ndn-file
+    image: delloro/ndn-file:v0.1.0
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+  imagePullSecrets:
+  - name: regcred
+
+#specify the k3s instead of using default k8s
+sudo kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml get pods
